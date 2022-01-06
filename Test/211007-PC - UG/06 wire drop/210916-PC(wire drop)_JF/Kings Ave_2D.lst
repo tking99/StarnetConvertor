@@ -1,0 +1,453 @@
+                   MicroSurvey STAR*NET-PRO Version 9,2,6,556
+                       Run Date: Tue Sep 21 2021 09:26:32
+
+
+                   Summary of Files Used and Option Settings
+                   =========================================
+
+                         Project Folder and Data Files
+
+      Project Name       KINGS AVE_2D
+      Project Folder     C:\01 PROJECTS\...\210916-PC(WIRE DROP)
+      Data File List  1. 03 Dat Files\Control_2D.dat
+                      2. 03 Dat Files\wire drop_2D.dat
+
+                            Project Option Settings
+
+      STAR*NET Run Mode                   : Adjust with Error Propagation
+      Type of Adjustment                  : 2D
+      Project Units                       : Meters; GONS
+      Coordinate System                   : LOCAL
+      Default Project Elevation           : 25.0000 Meters
+      Apply Average Scale Factor          : 0.9997928000
+      Input/Output Coordinate Order       : East-North
+      Angle Data Station Order            : From-At-To
+      Distance/Vertical Data Type         : Slope/Zenith
+      Convergence Limit; Max Iterations   : 0.010000; 10
+      Default Coefficient of Refraction   : 0.070000
+      Earth Radius                        : 6372000.00 Meters
+      Create Coordinate File              : Yes
+      Create Ground Scale Coordinate File : No
+      Create Dump File                    : No
+
+                       Instrument Standard Error Settings
+
+      Project Default Instrument
+        Distances (Constant)              :    0.001000 Meters
+        Distances (PPM)                   :    1.000000
+        Angles                            :    0.218200 MilliGons
+        Directions                        :    0.308600 MilliGons
+        Azimuths & Bearings               :    0.925926 MilliGons
+        Centering Error Instrument        :    0.001000 Meters
+        Centering Error Target            :    0.000500 Meters
+
+                             Listing of Input Data
+                             =====================
+
+[File: C:\01 Projects\09 TBM\10 KA_Wire drop\07 StarNet (Tunnel control)\210916-PC(wire drop)\03 Dat Files\Control_2D.dat]
+#################################################################
+# Underground Baseline based on Survey Network Control
+#################################################################
+.data off
+C	AB035           530036.94052 174985.89583   !!
+C	BR03            530107.98396 174992.09089   !!
+
+.data on
+# wire drop info
+#surface  - data form 210811_Kingsave file
+C KA23	530086.8539		174988.7457 	! !
+C KA22	530068.2944		174486.2109 	! !
+C AB035 530036.94052 	174985.89583    * *
+C BR03  530107.98396 	174992.09089    * *
+
+.data off 
+#Surface Network
+###########################################################################################
+# HMJV GNSS Postprocessing Results 15/04/2021
+###########################################################################################
+C	KA19	530074.684	174998.121	0.002	0.002 # Static Network
+C 	ka101 	529903.761	173747.495	0.002	0.002 # RTK Obs
+
+#C	KA22	530068.291	174486.214	0.002	0.002 # Previous/old Baseline
+
+
+#################################################################
+# WIMBLEDON HMJV RTK
+#################################################################
+C WIM5	525923.982	171956.707		0.002	0.002 #8.860
+C ka117	526043.693	172016.030		0.002	0.002 #8.849
+
+#################################################################
+# PPS Current Guiding bracket values (extrated from Relocation report)
+#################################################################
+C AG0005 530073.48297 174988.7148 * * # -7.46227	C 530073.48297 174988.7148 -7.46227 * * # 34.0617698321552	C 174988.7148 -7.46227 34.0617698321552 * * # 44355	C -7.46227 34.0617698321552 44355 * * # 	C 34.0617698321552 44355  * * # AG0005
+C AG0013 530063.051 174988.021 * * # -7.487	C 530063.051 174988.021 -7.487 * * # 10.4550158546788	C 174988.021 -7.487 10.4550158546788 * * # 	C -7.487 10.4550158546788  * * # 	C 10.4550158546788   * * # AG0013
+C AG0019 530055.853 174987.688 * * # -7.464	C 530055.853 174987.688 -7.464 * * # 7.2056986475738	C 174987.688 -7.464 7.2056986475738 * * # 44355	C -7.464 7.2056986475738 44355 * * # 	C 7.2056986475738 44355  * * # AG0019
+C AG0022 530052.291 174987.601 * * # -7.474	C 530052.291 174987.601 -7.474 * * # 3.56306230653428	C 174987.601 -7.474 3.56306230653428 * * # 44355	C -7.474 3.56306230653428 44355 * * # 	C 3.56306230653428 44355  * * # AG0022
+C AG0026 530047.966 174987.633 * * # -7.591	C 530047.966 174987.633 -7.591 * * # 4.32511837983628	C 174987.633 -7.591 4.32511837983628 * * # 44355	C -7.591 4.32511837983628 44355 * * # 	C 4.32511837983628 44355  * * # AG0026
+			
+
+
+.data on
+#'###############################################################
+# previous values 31/08/21 Pre Order
+#################################################################
+C	AB0110	529949.987	175008.346	**
+C	AB0170	529883.1172	175035.5073	**
+C	AB0180	529871.267	175039.1768	**
+C	AB025	530049.0729	174985.6743	**
+C	AB035	530036.9404	174985.896	**
+C	AB070	529995.0314	174991.3268	**
+C	AB080	529983.5181	174994.2067	**
+C	AG0121	529937.5882	175013.5547	**
+C	AT008	530068.3094	174986.4417	**
+C	AT0143	529913.0569	175024.225	**
+C	BM01	530106.5353	174992.4257	**
+C	BM02	530095.2359	174992.8951	**
+C	BR02	530148.1989	174996.5665	**
+C	BR03	530107.9839	174992.0908	**
+C	BR04	530107.9321	174989.1515	**
+C	KACB01	530100.1106	174996.1952	**
+C	KACB02	530105.7291	174993.5394	**
+C	KACB03	530106.2178	174987.3181	**
+C	KACB04	530101.1031	174983.8701	**
+C	KACB04A	530101.7122	174983.9365	**
+C	KACB05A	530094.6451	174988.4812	**
+C	KACB05B	530094.7115	174988.074	**
+C	KACB06	530095.0288	174992.7129	**
+C	KACB06A	530094.5355	174991.2264	**
+C	KAR05	530117.068	174994.098	**
+C	KAR08	530070.1285	174986.1458	**
+C	R2201	530100.0864	174996.161	**
+C	R2202	530105.6949	174993.4748	**
+C	R2203	530106.2205	174987.4645	**
+C	R2204	530101.1521	174983.9133	**
+C	R2205	530095.4792	174986.6731	**
+C	R2206	530095.0615	174992.6258	**
+C	SCL5	530119.766	174993.4175	**
+C	SCL6	530119.6141	174990.1019	**
+C	SCL8	530147.5459	174994.3574	**
+
+
+
+
+.data off
+###########################################################################################
+# DMT GNSS Postprocessing Results 08-10/12/2020
+###########################################################################################
+C	KA06	530074.8685	174741.9203 	*	*
+C	KA18	530099.8780	175087.2209 	*	*
+C	KA19	530074.6762	174998.1141		*	*
+C	KA20	530092.1823	174854.8329		*	*
+[File: C:\01 Projects\09 TBM\10 KA_Wire drop\07 StarNet (Tunnel control)\210916-PC(wire drop)\03 Dat Files\wire drop_2D.dat]
+###########################################################################################
+# wire drop(surface reading) - 11/09/2021 SETUP AT KA23
+###########################################################################################
+# M	KA22-KA23-KA22		0.00000		502.9683	#  11092021 Atmos ppm = 6.21549054338095     ( p: 1016mbar    t: 19C     hum: 70 % )
+# M	KA22-KA23-KA19		139.45797	15.3686	
+# M	KA22-KA23-KA24A		198.93647	37.3823	
+# M	KA22-KA23-KAR06		286.48802	30.6920	
+# M	KA22-KA23-KAR08		87.83559	16.9294	
+# M	KA22-KA23-KACB03	302.33481	19.4204	
+#M	KA22-KA23-T1000		296.77450	7.9588		# ignore wire - wire had to be lifted!
+#M	KA22-KA23-T5000		296.47768	19.6048		# ignore wire - wire had to be lifted!
+
+M	KA22-KA23-KA22		0.00000		502.9675	#  11092021 Atmos ppm = 6.21549054338095     ( p: 1016mbar    t: 19C     hum: 70 % )
+M	KA22-KA23-KA19		139.45825	15.3687	
+M	KA22-KA23-KA24A		198.93622	37.3824					
+M	KA22-KA23-W1		296.77404	7.9588	  	# angle to wire after lifting the plumb bob of the floor!
+M	KA22-KA23-W2		296.47741	19.6042	  	# angle to wire after lifting the plumb bob of the floor!
+
+
+
+
+###########################################################################################
+# wire drop(underground reading) - 11/09/2021 SETUP AT BR04
+###########################################################################################
+# M	AB035-BR04-AB035	0.00000		71.0789	  	#  11092021 Atmos ppm = 6.21549054338095     ( p: 1016mbar    t: 19C     hum: 70 % )
+# M	AB035-BR04-AB051	1.66588		90.3274	
+# M	AB035-BR04-AT008	398.56976	39.7221	
+# M	AB035-BR04-BR02		191.32536	40.9520	
+
+M	AB035-BR04-AB035	0.00000		71.0787	  	#  11092021 Atmos ppm = 6.21549054338095     ( p: 1016mbar    t: 19C     hum: 70 % )
+M	AB035-BR04-AB051	1.66584		90.3273	
+M	AB035-BR04-AT008	398.56981	39.7227	
+M	AB035-BR04-BR02		191.32490	40.9518	
+M	AB035-BR04-TRI01	1.47597		15.1691						
+M	AB035-BR04-W2		0.98256		1.4812		# angle to wire after lifting the plumb bob of the floor!
+M	AB035-BR04-W1		1.48097		13.1278		# angle to wire after lifting the plumb bob of the floor!
+
+# M	BR04-AT008-BR04		0.00000		39.7216	  	#  11092021 Atmos ppm = 6.21549054338095     ( p: 1016mbar    t: 19C     hum: 70 % )
+# M	BR04-AT008-BR03		395.34391	40.0822	
+# M	BR04-AT008-BR02		396.32282	80.5434	
+# M	BR04-AT008-AB051	205.52295	50.6882	
+# M	BR04-AT008-AB035	203.24155	31.3789	
+# M	BR04-AT008-AB025	201.81046	19.2550	
+# 
+# M	BR04-AB035-BR04		0.00000		71.1997	  	#  11092021 Atmos ppm = 6.21549054338095     ( p: 1016mbar    t: 19C     hum: 70 % )
+# M	BR04-AB035-AT008	1.80974		31.4330	
+# M	BR04-AB035-AB008	212.74166	54.1675	
+# M	BR04-AB035-AB007	211.12143	42.3383	
+# M	BR04-AB035-AB051	207.79238	19.3944	
+# 
+# M	BR04-AB051-BR04	0.00000		90.4796	  	#  11092021 Atmos ppm = 6.21549054338095     ( p: 1016mbar    t: 19C     hum: 70 % )
+# M	BR04-AB051-AT008	2.42555		50.7738	
+# M	BR04-AB051-AB008	213.82664	34.8650	
+# M	BR04-AB051-AB007	212.26282	22.9935	
+# M	BR04-AB051-AB035	6.12279		19.3946	
+
+                    Summary of Unadjusted Input Observations
+                    ========================================
+
+                    Number of Entered Stations (Meters) = 37
+
+Fixed Stations              E                 N     Description
+KA23                 530086.8539       174988.7457
+KA22                 530068.2944       174486.2109
+
+Free Stations               E                 N     Description
+AB035                530036.9405       174985.8958
+AT008                530068.3094       174986.4417
+BR02                 530148.1989       174996.5665
+BR04                 530107.9321       174989.1515
+
+Unused Stations
+BR03             AT0143           KACB05A          R2203
+AB0110           BM01             KACB05B          R2204
+AB0170           BM02             KACB06           R2205
+AB0180           KACB01           KACB06A          R2206
+AB025            KACB02           KAR05            SCL5
+AB070            KACB03           KAR08            SCL6
+AB080            KACB04           R2201            SCL8
+AG0121           KACB04A          R2202
+
+                    Number of Angle Observations (GONS) = 10
+
+From       At         To              Angle       StdErr
+KA22       KA23       KA19          139.458250      4.70
+KA22       KA23       KA24A         198.936220      2.03
+KA22       KA23       W1            296.774040      8.95
+KA22       KA23       W2            296.477410      3.65
+AB035      BR04       AB051           1.665840      0.64
+AB035      BR04       AT008         398.569810      1.18
+AB035      BR04       BR02          191.324900      2.61
+AB035      BR04       TRI01           1.475970      3.94
+AB035      BR04       W2              0.982560     47.23
+AB035      BR04       W1              1.480970      4.67
+
+                 Number of Distance Observations (Meters) = 12
+
+From       To            Distance   StdErr
+KA23       KA22          502.9675   0.0019
+KA23       KA19           15.3687   0.0015
+KA23       KA24A          37.3824   0.0015
+KA23       W1              7.9588   0.0015
+KA23       W2             19.6042   0.0015
+BR04       AB035          71.0787   0.0015
+BR04       AB051          90.3273   0.0016
+BR04       AT008          39.7227   0.0015
+BR04       BR02           40.9518   0.0015
+BR04       TRI01          15.1691   0.0015
+BR04       W2              1.4812   0.0015
+BR04       W1             13.1278   0.0015
+
+                         Adjustment Statistical Summary
+                         ==============================
+
+                        Iterations              =      2
+
+                        Number of Stations      =     12
+
+                        Number of Observations  =     22
+                        Number of Unknowns      =     20
+                        Number of Redundant Obs =      2
+
+            Observation   Count   Sum Squares         Error
+                                    of StdRes        Factor
+                 Angles      10         0.000         0.002
+              Distances      12        56.943         7.225
+
+                  Total      22        56.943         5.336
+
+       Warning: The Chi-Square Test at 5.00% Level Exceeded Upper Bound
+                       Lower/Upper Bounds (0.159/1.921)
+
+                          Adjusted Station Information
+                          ============================
+
+             Coordinate Changes from Entered Provisionals (Meters)
+
+Station                   dE             dN
+KA23                   -0.0000        -0.0000
+KA22                   -0.0000        -0.0000
+AB035                   0.0017        -0.0020
+AT008                   0.0003        -0.0014
+BR02                   -0.0013         0.0010
+BR04                   -0.0006         0.0002
+
+                         Adjusted Coordinates (Meters)
+
+Station                   E              N     Description
+KA23               530086.8539    174988.7457
+KA22               530068.2944    174486.2109
+AB035              530036.9422    174985.8938
+AT008              530068.3097    174986.4403
+BR02               530148.1976    174996.5675
+BR04               530107.9315    174989.1517
+KA19               530074.6845    174998.1267
+KA24A              530087.6090    175026.1127
+W1                 530094.8100    174988.8552
+W2                 530106.4510    174989.1067
+AB051              530017.6404    174987.3733
+TRI01              530092.7694    174988.8079
+
+                      Adjusted Observations and Residuals
+                      ===================================
+
+                       Adjusted Angle Observations (GONS)
+
+From       At         To              Angle          Residual     Distance   StdErr StdRes File:Line
+AB035      BR04       W2              0.982616       0.000056       0.0000    47.23   0.0     2:35  
+KA22       KA23       W1            296.774050       0.000010       0.0000     8.95   0.0     2:16  
+KA22       KA23       W2            296.477408      -0.000002      -0.0000     3.65   0.0     2:17  
+AB035      BR04       W1              1.480969      -0.000001      -0.0000     4.67   0.0     2:36  
+KA22       KA23       KA19          139.458250      -0.000000      -0.0000     4.70   0.0     2:14  
+KA22       KA23       KA24A         198.936220       0.000000       0.0000     2.03   0.0     2:15  
+AB035      BR04       AB051           1.665840      -0.000000      -0.0000     0.64   0.0     2:31  
+AB035      BR04       TRI01           1.475970      -0.000000      -0.0000     3.94   0.0     2:34  
+AB035      BR04       AT008         398.569810       0.000000       0.0000     1.18   0.0     2:32  
+AB035      BR04       BR02          191.324900       0.000000       0.0000     2.61   0.0     2:33  
+
+                    Adjusted Distance Observations (Meters)
+
+           From       To              Distance      Residual   StdErr StdRes File:Line
+           KA23       KA22            502.9816        0.0141   0.0019   7.5*    2:13  
+           KA23       W2               19.6045        0.0003   0.0015   0.2     2:17  
+           BR04       W1               13.1275       -0.0003   0.0015   0.2     2:36  
+           KA23       W1                7.9585       -0.0003   0.0015   0.2     2:16  
+           BR04       W2                1.4815        0.0003   0.0015   0.2     2:35  
+           BR04       AB035            71.0787        0.0000   0.0015   0.0     2:30  
+           BR04       AT008            39.7227        0.0000   0.0015   0.0     2:32  
+           BR04       TRI01            15.1691        0.0000   0.0015   0.0     2:34  
+           KA23       KA24A            37.3824       -0.0000   0.0015   0.0     2:15  
+           BR04       BR02             40.9518        0.0000   0.0015   0.0     2:33  
+           BR04       AB051            90.3273       -0.0000   0.0016   0.0     2:31  
+           KA23       KA19             15.3687       -0.0000   0.0015   0.0     2:14  
+
+           Adjusted Azimuths (GONS) and Horizontal Distances (Meters)
+           ==========================================================
+                (Relative Confidence of Azimuth is in MilliGons)
+                  NOTE - Adjustment Failed the Chi-Square Test
+          Angular and Distance Errors are Scaled by Total Error Factor
+
+From       To               Azimuth    Distance       95% RelConfidence
+                                                    Azi    Dist       PPM
+AB035      BR04            97.08041     71.0640 1539.26   0.0202  284.6194
+AB051      BR04            98.74625     90.3086 1541.52   0.0204  225.9026
+AT008      BR04            95.65022     39.7145 1546.95   0.0199  502.2102
+BR02       BR04           288.40531     40.9433 1576.66   0.0200  487.4043
+BR04       TRI01          298.55638     15.1660 1623.18   0.0197 1300.8065
+BR04       W1             298.56138     13.1248 1379.66   0.0171 1300.0476
+BR04       W2             298.06303      1.4812 7078.00   0.0170 11480.2337
+KA19       KA23           141.80833     15.3655  614.48   0.0197 1284.0264
+KA22       KA23             2.35008    502.8774    0.00   0.0000    0.0037
+KA23       KA24A            1.28630     37.3747  265.29   0.0199  533.0940
+KA23       W1              99.12413      7.9569 1169.52   0.0170 2141.1543
+KA23       W2              98.82749     19.6004  476.32   0.0171  872.2064
+
+                               Error Propagation
+                               =================
+
+                Station Coordinate Standard Deviations (Meters)
+                  NOTE - Adjustment Failed the Chi-Square Test
+              Standard Deviations are Scaled by Total Error Factor
+
+Station                     E             N
+KA23                      0.000001      0.000001
+KA22                      0.000001      0.000001
+AB035                     0.011923      0.062815
+AT008                     0.011712      0.032327
+BR02                      0.013698      0.048524
+BR04                      0.008044      0.009502
+KA19                      0.007378      0.006873
+KA24A                     0.006364      0.008139
+W1                        0.006960      0.005972
+W2                        0.006984      0.005992
+AB051                     0.011691      0.081962
+TRI01                     0.011386      0.010628
+
+                   Station Coordinate Error Ellipses (Meters)
+                  NOTE - Adjustment Failed the Chi-Square Test
+                Error Ellipses are Scaled by Total Error Factor
+                            Confidence Region = 95%
+
+Station                 Semi-Major    Semi-Minor   Azimuth of
+                            Axis          Axis     Major Axis
+KA23                      0.000000      0.000000       0.00
+KA22                      0.000000      0.000000       0.00
+AB035                     0.153935      0.028223     196.87
+AT008                     0.079364      0.028012     194.77
+BR02                      0.120205      0.027971     189.89
+BR04                      0.023259      0.019687     198.65
+KA19                      0.019730      0.014831     141.81
+KA24A                     0.019924      0.015574       1.29
+W1                        0.017037      0.014617      99.47
+W2                        0.017096      0.014665      98.97
+AB051                     0.200660      0.028351     198.76
+TRI01                     0.027871      0.026015      99.03
+
+                        Relative Error Ellipses (Meters)
+                  NOTE - Adjustment Failed the Chi-Square Test
+            Relative Error Ellipses are Scaled by Total Error Factor
+                            Confidence Region = 95%
+
+Stations                Semi-Major    Semi-Minor   Azimuth of
+From       To               Axis          Axis     Major Axis
+AB035      BR04           0.171822      0.020226     197.08
+AB051      BR04           0.218675      0.020401     198.75
+AT008      BR04           0.096504      0.019945     195.65
+BR02       BR04           0.101401      0.019956     188.41
+BR04       TRI01          0.038668      0.019728     198.56
+BR04       W1             0.028444      0.017063     198.51
+BR04       W2             0.017005      0.016466      94.93
+KA19       KA23           0.019730      0.014831     141.81
+KA22       KA23           0.000000      0.000000       0.00
+KA23       KA24A          0.019924      0.015574       1.29
+KA23       W1             0.017037      0.014617      99.47
+KA23       W2             0.017096      0.014665      98.97
+
+
+                           Elapsed Time = 00:00:00
+
+27
+44
+01 00000001 Top of File
+01 00000005 Summary of Files Used and Option Settings
+02 00000008 Project Folder and Data Files
+02 00000015 Project Option Settings
+02 00000033 Instrument Standard Error Settings
+03 00000035 Project Default Instrument
+01 00000044 Listing of Input Data
+01 00000199 Summary of Unadjusted Input Observations
+02 00000202 Entered Stations
+03 00000204 Fixed Coordinates
+03 00000208 Free Coordinates
+03 00000214 Unused Stations
+02 00000224 Angle Observations
+02 00000238 Distance Observations
+01 00000254 Adjustment Statistical Summary
+01 00000275 Adjusted Station Information
+02 00000278 Coordinate Changes from Entered Provisionals
+02 00000288 Adjusted Coordinates
+01 00000304 Adjusted Observations and Residuals
+02 00000307 Adjusted Angle Observations
+02 00000321 Adjusted Distance Observations
+01 00000337 Adjusted Azimuths and Horizontal Distances
+01 00000358 Error Propagation
+02 00000361 Station Coordinate Standard Deviations
+02 00000379 Station Coordinate Error Ellipses
+02 00000399 Relative Error Ellipses
+01 00000418 End of File
+000053AF
+STAR*NET
+0001788B
