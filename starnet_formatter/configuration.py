@@ -9,9 +9,9 @@ class Settings:
         self._distance_tolerance = 0.0017
         self._hz_angle_tolerance = 0.0010
         self._za_angle_tolerance = 0.0010
-        self._angular_unit = Settings.ALLOWED_ANGULAR_UNIT[1]
+        self._angular_unit = Settings.ALLOWED_ANGULAR_UNIT[0]
         self._linear_precision = 4 # decimal places
-        self._angular_precision = 5 # decimal places
+        self._angular_precision = 9 # decimal places
         self.apply_scale_factor = False
         self.capature_side_shots = True
         self.side_shot_prefix = 'SS'
@@ -107,7 +107,7 @@ class ExportSettings:
         self.export2d = False 
         self.export3d = False
         self.export_spigot = True
-        self.setup_scale_factor = False 
+        self.setup_scale_factor = True 
         self.remove_side_shots = False
         self._side_shot_processing_code = self.ALLOWED_SIDE_SHOT_PROCESSING_CODE[0]
         self.comments = CommentSettings()
