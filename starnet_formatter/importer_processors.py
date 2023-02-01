@@ -2,8 +2,8 @@ import re
 
 from starnet_formatter.survey_processors import SurveyProccesor
 from starnet_formatter.factories import FormatObLineBuilderFactory
-from starnet_formatter.builders import FormatFileSetupLineBuilder, FormatFileObLineBuilder
-from starnet_formatter.surveyModels import Setup, Observation
+from starnet_formatter.builders import FormatFileSetupLineBuilder, FormatFileObLineBuilder, FormatFileJobLineBuilder
+from starnet_formatter.surveyModels import Setup, Observation, Job
 
 
 class FormatFileProcessor:
@@ -70,7 +70,7 @@ class FormatLinesProcessor:
         self.format_errors = FormatLinesProcessorErrors(file_name)
         # get the right ob line builder based on the settings passed in
         self.builders = (FormatObLineBuilderFactory.builder(self.settings.angular_unit), 
-            FormatFileSetupLineBuilder)
+            FormatFileSetupLineBuilder, FormatFileJobLineBuilder)
 
     @property
     def errors(self):
@@ -116,12 +116,17 @@ class FormatLinesProcessor:
         """Checks if there is a current setup, if so adds 
         to the list of setups and sets to None again"""
         if self._current_setup is not None:
-            self._setups.append(self._current_setup)
+            # if setup has no observation, don't add to the list of setups
+            total_obs = self._current_setup.total_target_observations + self._current_setup.total_side_shot_observations
+            if total_obs > 0:
+                self._setups.append(self._current_setup)
             self._current_setup = None 
 
     def _process_build(self, build):
         if isinstance(build, Setup):
             # Setup built
+            # set setup instrument type to default from settings file
+            build.instrument_type = self.settings.instrument_type
             if self._current_setup:
                 self._setups.append(self._current_setup)
             self._current_setup = build 
@@ -140,7 +145,13 @@ class FormatLinesProcessor:
                 # not current_setup to assign observation - log error
                 build.add_no_setup_error()
                 self.format_errors.add_errors(build)
-               
+        
+        elif isinstance(build, Job):
+            """set the comment surveyor to the saved surveyor name from
+            the job"""
+            self.settings.export_settings.comments.surveyor = build.surveyor
+
+
     def _check_side_shot(self, observation):
         """Checks if the observation is a side shot based 
         on checking the prefix to the observation name"""
@@ -178,3 +189,21 @@ class FormatLinesProcessorErrors:
         """Adds the errors to the correct list based on the builder type"""
         if builder.errors:
             self.line_errors.extend(builder.errors)
+
+
+class CompanyDefFileProcessor:
+    """Reads and processes a Star*net company def file to 
+    extract instrument specifications""" 
+
+    @classmethod 
+    def extract_instrument_types(cls, def_file):
+        """returns a tuple of the different instrument types 
+        from a star*net company def file"""
+        with open(def_file, 'r') as f:
+            lines = f.readlines()
+            instrument_types = []
+            for l in lines:
+                splitted = l.split()
+                if splitted and splitted[0] == 'instrument_name' and len(splitted) >=2: 
+                    instrument_types.append(splitted[1])
+        return instrument_types

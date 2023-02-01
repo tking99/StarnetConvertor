@@ -8,6 +8,7 @@ from gui.survey_displays.survey_model_edits_displays import SetupEditFrame, \
          TargetEditFrame, SideShotEditFrame
 
 from starnet_formatter.convertors import gons_to_dms, dms_to_str
+from starnet_formatter.checkers import SetupsChecker
 
 # Need to refactor all of the factories depending if its GONS and DMS - single factory
 # that returns all the frames required
@@ -108,7 +109,15 @@ class SurveyProcessorFrame(ttk.Frame):
         """Calls the controller and displays the 
         starnet setups display"""
         # load export display 
-        self.controller.display_export_settings()
+        # check all setups have an at least 1 active target ob
+        no_target_ob_setups = SetupsChecker.no_target_obs(self.survey_processor.setups)
+        if no_target_ob_setups:
+           tk.messagebox.showerror(title='No Active Target Obs', 
+            message=f'Following setups have no active target obs {no_target_ob_setups}')
+        else:
+            self.controller.display_export_settings()
+
+
 
     
 class SetupTabsFrame(ttk.Frame):
@@ -266,9 +275,17 @@ class SetupInfoFrame(ttk.Frame):
             onvalue=True, offvalue=False, 
             command=self.apply_scale_factor_toggle)
         self.sf_cb.grid(column=8, row=0, sticky="W", padx=(20,0))
+
+        self.setup_instrument_type = tk.StringVar(value=self.setup.instrument_type)
+        inst_type_combo = ttk.Combobox(self, textvariable=self.setup_instrument_type,
+            values=self.controller.survey_processor.settings.instrument_types)
+        inst_type_combo.grid(column=9, row=0, sticky='W', padx=6)
+        inst_type_combo.bind('<<ComboboxSelected>>', self.update_setup_instrument_type)
+
+        
         ttk.Button(self, text="Edit", command=self.display_edit_setup_frame
-            ).grid(column=9, row=0, sticky='W', padx=(5,5))
-        ttk.Button(self, text='Delete', command=self.delete_setup).grid(column=10, row=0, sticky='W', padx=(5,5))
+            ).grid(column=10, row=0, sticky='W', padx=(5,5))
+        ttk.Button(self, text='Delete', command=self.delete_setup).grid(column=11, row=0, sticky='W', padx=(5,5))
 
     def delete_setup(self):
         """Asks user for confirmation to delete a setup, 
@@ -278,6 +295,10 @@ class SetupInfoFrame(ttk.Frame):
         if answer:
             self.controller.delete_setup()
                
+    def update_setup_instrument_type(self, *arg):
+        """event binder that updates the setup instrument type"""
+        self.setup.instrument_type = self.setup_instrument_type.get()
+    
     def update_setup_info(self, name, ih, sf, atmos_ppm):
         self.setup_name.set(name)
         self.ih.set(f'{ih:.3f}')
@@ -329,7 +350,7 @@ class TargetsObservationsCanvas(tk.Canvas):
 
     def _on_mousewheel(self, event):
         self.yview_scroll(-int(event.delta/120), "units")
-
+####################################################################################################################
     def refresh_target_observations(self):
         for child in self.survey_obs_frame.winfo_children():
             child.destroy()
@@ -458,7 +479,8 @@ class MeanObFrame(ttk.Frame):
   
 
 class TargetInfoFrame(ttk.Frame):
-    TARGET_ID_STRING = 'Target ID:'
+    TARGET_ID_STRING = 'Target'
+    TARGET_OPTIONS = ['TARGET', 'SPIGOT']
     def __init__(self, container, controller, target, setup,
         *args, **kwargs):
         super().__init__(container, *args, **kwargs)
@@ -466,39 +488,49 @@ class TargetInfoFrame(ttk.Frame):
         self.controller = controller
         self.target = target 
         self.setup = setup
-
         s = ttk.Style()
         s.configure('Target.TLabel', font=('Sans', '11', 'bold'), padding=(0,6))
-
         self.target_name_var = tk.StringVar(value=target.name)
         self.target_height_var = tk.StringVar(value=f'{target.target_height:.3f}')
         self.target_pc_var = tk.StringVar(value=f'{target.prism_constant:.1f}')
 
-        ttk.Label(self, text=self.TARGET_ID_STRING, style='Target.TLabel').grid(column=0, row=0, sticky="W", padx=(5,3))
-        ttk.Label(self, textvariable=self.target_name_var, style='Target.TLabel').grid(column=1, row=0, sticky="W")
+        #
+        ttk.Label(self, text='Target Type: ', style='Target.TLabel').grid(column=0, row=0, sticky='W')
+        # setting the target type
+        self.target_type = tk.StringVar(value=self.TARGET_ID_STRING)
+        target_type_combo = ttk.Combobox(self, textvariable=self.target_type,
+            values=self.TARGET_OPTIONS)
+        target_type_combo.grid(
+                column=1, row=0, sticky='W', padx=(5,3))
+        target_type_combo.bind('<<ComboboxSelected>>', self.change_target)
+        
+        ttk.Label(self, textvariable=self.target_name_var, style='Target.TLabel').grid(column=2, row=0, sticky="W", padx=(5,0))
 
-        ttk.Label(self, text='TH:', style='Target.TLabel').grid(column=2, row=0, sticky="W", padx=(10,3))
-        ttk.Label(self, textvariable=self.target_height_var, style='Target.TLabel').grid(column=3, row=0, sticky="W")
-        ttk.Label(self, text='PC:', style='Target.TLabel').grid(column=4, row=0, sticky='W', padx=(10,3))
-        ttk.Label(self, textvariable=self.target_pc_var, style='Target.TLabel').grid(column=5, row=0, sticky='W')
-
+        ttk.Label(self, text='TH:', style='Target.TLabel').grid(column=3, row=0, sticky="W", padx=(10,3))
+        ttk.Label(self, textvariable=self.target_height_var, style='Target.TLabel').grid(column=4, row=0, sticky="W")
+        ttk.Label(self, text='PC:', style='Target.TLabel').grid(column=5, row=0, sticky='W', padx=(10,3))
+        ttk.Label(self, textvariable=self.target_pc_var, style='Target.TLabel').grid(column=6, row=0, sticky='W')
 
         # need to define a control dict holding the set to zero variables
         self.set_to_zero_frame()
 
-        
-        
         ttk.Button(self, text="Edit", command=self.display_edit_target_frame
-            ).grid(column=7, row=0, padx=3)
+            ).grid(column=8, row=0, padx=3)
         
-        ttk.Button(self, text='Delete', command=self.delete_target).grid(column=8, row=0, padx=3)
+        ttk.Button(self, text='Delete', command=self.delete_target).grid(column=9, row=0, padx=3)
 
+
+    def change_target(self, *args):
+        """Changes the target type of a target"""
+        self.controller.survey_processor.move_target(self.setup,
+            self.target.name, self.target_type.get())
+        self.controller.canvas.refresh_target_observations()
 
     def set_to_zero_frame(self):
         self.set_to_zero = ttk.Radiobutton(self, text='Set to 0"', 
             variable=self.controller.reduce_to_target, 
                 value=self.target.name, command=self.set_zero_to)
-        self.set_to_zero.grid(column=6, row=0, padx=10, sticky="W")
+        self.set_to_zero.grid(column=7, row=0, padx=10, sticky="W")
     
     def delete_target(self):
         answer = askyesno(title=f'Delete Target {self.target.name}',
@@ -532,7 +564,7 @@ class TargetInfoFrame(ttk.Frame):
         )
 
 class SideShotInfoFrame(TargetInfoFrame):
-    TARGET_ID_STRING = 'Spigot ID'
+    TARGET_ID_STRING = 'Spigot'
 
     def delete_target(self):
         answer = askyesno(title=f'Delete Target {self.target.name}',
@@ -747,7 +779,6 @@ class GonObservationsTableFrame(ObservationsTableFrame):
         ttk.Label(self, text=u'\u0394 Slop. D', style='Heading.TLabel').grid(column=16, row=self.HEADING_ROW, sticky='EW')
         ttk.Label(self, text=u'\u0394 Hori. D', style='Heading.TLabel').grid(column=17, row=self.HEADING_ROW, sticky='EW')
         ttk.Label(self, text='Act.', style='Heading.TLabel').grid(column=18, row=self.HEADING_ROW, sticky='EW')
-
         ttk.Separator(self, orient=tk.HORIZONTAL).grid(column=0,
                 row=self.HEADING_ROW+1, columnspan=20, sticky='ew')
 

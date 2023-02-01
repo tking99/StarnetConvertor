@@ -2,7 +2,11 @@ from math import cos, sin, radians
 from decimal import Decimal
 from decimal import InvalidOperation
 
-
+class Job:
+    def __init__(self, surveyor=None):
+        self.surveyor = surveyor
+        
+        
 class Observation:
     def __init__(self, target_name, hz_angle, za_angle, 
         sd, th, pc, atr, face, date_time, inclin_long, inclin_trav,
@@ -104,7 +108,8 @@ class DecimalMeanObservation(MeanObservation):
 
 
 class Setup:
-    def __init__(self, name, instrument_height, date_time, atmos_ppm, sf):
+    def __init__(self, name, instrument_height, date_time, 
+        atmos_ppm, sf):
         self.name = name
         self.instrument_height = instrument_height
         self.date_time = date_time
@@ -112,8 +117,9 @@ class Setup:
         self._scale_factor = sf
         self.target_observations = {}
         self.side_shot_observations = {}
-        self._reduce_to = None    
-
+        self._reduce_to = None
+        self.instrument_type = None
+   
     @property
     def atmospheric_ppm(self):
         return self._atmospheric_ppm
@@ -213,6 +219,22 @@ class Setup:
             self.side_shot_observations)
         side_obs.observations.append(observation)
 
+    def move_target_to_spigot(self, target_id):
+        """moves a target to the side shot dictionary"""
+        target = self.target_observations.get(target_id)
+        if target: 
+            self.side_shot_observations[target_id] = target 
+            del self.target_observations[target_id]
+            # remove target id to reduce to
+            self.remove_reduce_to(target)
+    
+    def move_spigot_to_target(self, target_id):
+        """moves a side shot to the target dictionary"""
+        target = self.side_shot_observations.get(target_id)
+        if target:
+            self.target_observations[target_id] = target
+            del self.side_shot_observations[target_id]
+
     def _get_target_observations(self, observation, target_obs_dict):
         """gets the target observation from the dictionary, 
         else creates a new target observation using the observation 
@@ -234,7 +256,7 @@ class Setup:
         """Deleta a sideshot observation from a setup if present"""
         if sideshot.name in self.side_shot_observations:
             del self.side_shot_observations[sideshot.name]
-    
+
     def __repr__(self):
         return self.name 
     
@@ -254,7 +276,6 @@ class TargetObservation:
     def __repr__(self):
         return self.name
 
-    
     @property 
     def prism_constant(self):
         """Assumes all observations have the same PC so returns the 
@@ -262,14 +283,15 @@ class TargetObservation:
         if self.observations:
             return self.observations[0].prism_constant
 
+
     def change_prism_constant(self, pc):
         """Changes the prism constant and updates the 
         observation distances and pc with the new constant"""
-        if pc != self.prism_constant:
-            delta = (pc - self.prism_constant)/1000 #Convert PC in mm to m
+        if pc!= self.prism_constant:
+            delta = self.prism_constant - pc
             for ob in self.observations:
-                ob.slope_distance -= delta
-                ob.prism_constant = pc
+                ob.slope_distance -= delta / 1000 # convert delta to m 
+                ob.prism_constant = pc 
                    
     def mean_target_observation(self, ob_reducer, apply_scale=False):
         """Require a ob_reducer and optionally scale bool to create 
@@ -297,12 +319,12 @@ class TargetObservation:
 
 
 class StarnetSetup:
-    def __init__(self, name, date_time, 
-        atmos_ppm, sf):
+    def __init__(self, name, date_time, atmos_ppm, sf, instrument_type):
         self.name = name 
         self.date_time = date_time 
         self.atmospheric_ppm = atmos_ppm 
         self.scale_factor = sf 
+        self.instrument_type = instrument_type
         self.starnet_measurements = []
         self.starnet_side_shots = []
 
@@ -317,9 +339,12 @@ class StarnetSetup:
             key=lambda measurement: measurement.hz_angle)
 
     def starnet_side_shots_sorted(self):
-        return sorted(self.starnet_side_shots,
-            key=lambda measurement:measurement.hz_angle)
-
+        """returns a list of sorted side shots obs with the first target RO measurments"""
+        l = sorted(self.starnet_side_shots, key=lambda measurement:measurement.hz_angle)
+        if l:
+            # add ro measurement 
+            l.insert(0, self.starnet_measurements_sorted()[0])
+        return l
 
 class StarnetMeasurement:
     CODE = 'M'
@@ -340,7 +365,6 @@ class StarnetMeasurement:
     def __len__(self):
         return len(self.station_id+self.backsight_id+self.target_id)
         
-
 
 class StarnetSideShotMeasurementSS(StarnetMeasurement):
     CODE = 'SS'

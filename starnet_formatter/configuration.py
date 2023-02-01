@@ -1,20 +1,46 @@
+import os 
+import sys 
 from decimal import Decimal
+from pathlib import Path
+
+from starnet_formatter.importer_processors import CompanyDefFileProcessor
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.environ.get("_MEIPASS2",os.path.abspath("."))
+
+    return os.path.join(base_path, relative_path)
+
 
 class Settings:
     ALLOWED_TOLERANCE = (0.00000, 1.0)
     ALLOWED_ANGULAR_UNIT = ('GONS', 'DMS')
+    DEFAULT_DEF_FILE = 'default_files/Company.def'
+    DEFAULT_INST_TYPE = 'TS60_Mean_6'
 
     def __init__(self):
         # Assign Default Values within the settings
         self._distance_tolerance = 0.0017
         self._hz_angle_tolerance = 0.0010
         self._za_angle_tolerance = 0.0010
-        self._angular_unit = Settings.ALLOWED_ANGULAR_UNIT[0]
+        self._angular_unit = Settings.ALLOWED_ANGULAR_UNIT[1]
         self._linear_precision = 4 # decimal places
-        self._angular_precision = 9 # decimal places
+        self._angular_precision = 5 # decimal places
         self.apply_scale_factor = False
         self.capature_side_shots = True
         self.side_shot_prefix = 'SS'
+        self._instrument_types = None
+        self._instrument_type = None
+
+        # init set the instrument types to default company def file if exists else None
+        self.instrument_types = resource_path(self.DEFAULT_DEF_FILE)
+        # set default inst_type 
+        self.instrument_type = self.DEFAULT_INST_TYPE
+
         # create a export settings object
         self.export_settings = ExportSettings()
     @property 
@@ -52,6 +78,29 @@ class Settings:
     def za_angle_tolerance(self, tolerance):
         if self.check_distance_tolerance(tolerance):
             self._za_angle_tolerance = Decimal(tolerance)
+
+    @property
+    def instrument_types(self):
+        return self._instrument_types
+
+    @instrument_types.setter
+    def instrument_types(self, def_file):
+        """sets the instrument specs for the project using a company.def
+        file"""
+        path = Path(def_file)
+        if path.is_file():
+            instrument_types = CompanyDefFileProcessor.extract_instrument_types(path)
+            if instrument_types:
+                self._instrument_types = instrument_types
+
+    @property 
+    def instrument_type(self):
+        return self._instrument_type
+    
+    @instrument_type.setter 
+    def instrument_type(self, inst_type):
+        if self.instrument_types and inst_type in self.instrument_types:
+            self._instrument_type = inst_type
 
     def check_distance_tolerance(self, tolerance):
         """Checks if the passed in tolerance is allowed"""
@@ -104,17 +153,21 @@ class ExportSettings:
         self._angular_unit = self.ALLOWED_ANGULAR_UNIT[1]
         self._measurement_format = self.ALLOWED_MEASUREMENT_FORMAT[0]
         self._linear_unit = self.ALLOWED_LINEAR_UNITS[0]
+        self.setup_instrument_type = True
         self.export2d = False 
         self.export3d = False
         self.export_spigot = True
-        self.setup_scale_factor = True 
-        self.remove_side_shots = False
+        self.setup_scale_factor = False
+        self.setup_instrument_type = True
+        self.process_target_obs = True
         self._side_shot_processing_code = self.ALLOWED_SIDE_SHOT_PROCESSING_CODE[0]
+        self.process_side_shot_obs = True
         self.comments = CommentSettings()
+        self.combine_2D_file = False 
+        self.combine_3D_file = False
         self.file_2D_path = None
         self.file_3D_path = None
-      
-
+          
     @property
     def side_shot_processing_code(self):
         return self._side_shot_processing_code
@@ -159,7 +212,7 @@ class ExportSettings:
     def measurement_format(self, meas_format):
         if meas_format in self.ALLOWED_MEASUREMENT_FORMAT:
             self._measurement_format = meas_format
-            
+        
     def apply_export_2d_toggle(self):
         self.export2d = not self.export2d
 
@@ -172,8 +225,21 @@ class ExportSettings:
     def apply_setup_scale_factor_toggle(self):
         self.setup_scale_factor = not self.setup_scale_factor
 
-    def apply_remove_side_shots_toggle(self):
-       self.remove_side_shots = not self.remove_side_shots
+    def apply_setup_instrument_toggle(self):
+        self.setup_instrument_type = not self.setup_instrument_type
+
+    def apply_process_target_obs_toggle(self):
+       self.process_target_obs = not self.process_target_obs
+       print(self.process_target_obs)
+
+    def apply_process_side_shot_obs_toggle(self):
+        self.process_side_shot_obs = not self.process_side_shot_obs
+
+    def apply_combine_2D_toggle(self):
+        self.combine_2D_file = not self.combine_2D_file
+    
+    def apply_combine_3D_toggle(self):
+        self.combine_3D_file = not self.combine_3D_file
 
 
 class CommentSettings:
@@ -183,7 +249,8 @@ class CommentSettings:
         self.atmospheric_ppm = True
         self.scale_factor = False
         self.date_time = True 
-        self.code = False 
+        self.code = False
+        self.surveyor = None 
 
     def turn_off_all(self):
         """turns all the attribute bools off"""

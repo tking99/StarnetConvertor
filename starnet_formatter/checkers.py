@@ -70,8 +70,12 @@ class GonReducedObservationChecker(DecimalReducedObservationChecker):
         self.half_circle = 200 
         self.circle = 400
 
-       
 
-    
+class SetupsChecker:
+    @staticmethod
+    def no_target_obs(setups):
+        """returns a list of setups with 
+        no target obs within it"""
+        return [setup for setup in setups if setup.total_target_observations == 0]
 
 

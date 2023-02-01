@@ -46,7 +46,6 @@ class ObservationStatReducerFactory(AngularFactory):
                     return reducer
 
 
-
 class StarnetSideShotFactory:
     """Returns the Side shot Measurment class based on the 
     passed in side shot code"""

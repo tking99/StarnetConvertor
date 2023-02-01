@@ -66,6 +66,15 @@ class FormatFileObservationElementsExtractor:
         return ob_line[18]
 
 
+class FormatFileJobElementsExtractor:
+    """Extracts Job data from a SOA format file"""
+    CODE = 'JO'
+
+    @staticmethod
+    def extract_surveyor(job_line):
+        return job_line[2]
+
+
 class FormatFileSetupElementsExtractor:
     """Extracts setup data from a SOA format file""" 
     CODE = 'SU'

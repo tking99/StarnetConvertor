@@ -4,6 +4,7 @@ from tkinter import ttk
 
 
 class AboutDisplay(tk.Toplevel):
+    VERSION = 'V1.80'
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         self.container = container
@@ -20,16 +21,15 @@ class AboutDisplay(tk.Toplevel):
         title_style = ttk.Style()
         title_style.configure('Title.TLabel', font=('Sans', '12'))
         ttk.Label(about_frame, text='Star*net Convertor', style='Title.TLabel').grid(column=0, row=0, sticky='N')
-        ttk.Label(about_frame, text='V1.30', style='Title.TLabel').grid(column=0, row=1, sticky='N')
+        ttk.Label(about_frame, text=self.VERSION, style='Title.TLabel').grid(column=0, row=1, sticky='N')
         
-
         software_info = ttk.Frame(self)
         software_info.grid(column=0, row=1)
         ttk.Label(software_info, text='Build Date: ').grid(column=0, row=0, sticky='E')
         ttk.Label(software_info, text='Version: ').grid(column=0, row=1, sticky='E')
 
-        ttk.Label(software_info, text='Jan 01 2022').grid(column=1, row=0, sticky='W')
-        ttk.Label(software_info, text='1.30').grid(column=1, row=1, sticky='W')
+        ttk.Label(software_info, text='December 12 2022').grid(column=1, row=0, sticky='W')
+        ttk.Label(software_info, text=self.VERSION).grid(column=1, row=1, sticky='W')
         ttk.Label(software_info, text=f'Copyright {datetime.now().year}, Tom King').grid(
             column=0, row=2, columnspan=2, sticky='EW', pady=10)
        

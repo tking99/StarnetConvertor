@@ -178,7 +178,7 @@ class TargetEditFrame(tk.Toplevel):
         new_pc = self.target_pc.get()
         if Decimal(new_pc) != self.target.prism_constant:
             tk.messagebox.showinfo(title='Prism Constant Adjustment',
-                    message = f'Scaling observation distances by {self.target.prism_constant-Decimal(new_pc):.1f} mm.')
+                    message = f'Scaling observation distances by {Decimal(new_pc)-self.target.prism_constant:.1f} mm.')
 
         self.container.update_target_info(self.target_name.get(),
             self.target_height.get(), self.target_pc.get())

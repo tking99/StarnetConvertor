@@ -9,7 +9,6 @@ class SettingsDisplay(tk.Toplevel):
         pop_up_frame = ttk.Frame(self)
         pop_up_frame.grid(column=0, row=0, padx=10, pady=10,
             sticky='NSEW')
-
         self.title('Project Settings')
         self.resizable(False, False)
 
@@ -52,7 +51,7 @@ class SettingsDisplay(tk.Toplevel):
         self.capature_side_shots = tk.BooleanVar(value=self.settings.capature_side_shots)
         self.side_shot_prefix = tk.StringVar(value=self.settings.side_shot_prefix)
 
-        ttk.Label(pop_up_frame, text='Capaute Side Shots').grid(column=0, row=5, pady=2, padx=3, sticky='W')
+        ttk.Label(pop_up_frame, text='Capture Side Shots').grid(column=0, row=5, pady=2, padx=3, sticky='W')
         ttk.Checkbutton(pop_up_frame, variable=self.capature_side_shots, onvalue=True,
             offvalue=False, command=self.capature_side_shots_toggle).grid(
                 column=1, row=5, pady=6, padx=3, sticky='W')
@@ -76,18 +75,20 @@ class SettingsDisplay(tk.Toplevel):
             validate='key', validatecommand=(vcmd2, '%P'))
         self.angular_precision_entry.grid(column=1, row=8, pady=2, padx=3, sticky='W')
 
-
-
+        # Default instrument type
+        ttk.Label(pop_up_frame, text='Instrument Type').grid(column=0, row=9, pady=2, padx=3, sticky='W') 
+        self.instrument_type = tk.StringVar(value=self.settings.instrument_type)
+        inst_type_combo = ttk.Combobox(pop_up_frame, textvariable=self.instrument_type,
+            values=self.settings.instrument_types). grid(column=1, row=9, pady=2, padx=3, sticky='W')
+    
         ttk.Button(pop_up_frame, text='Apply', command=self.save_settings).grid(
-            column=0, row=9, pady=3, padx=3, sticky='W'
+            column=0, row=10, pady=5, padx=3, sticky='W'
         )
         ttk.Button(pop_up_frame, text='Cancel', command=self.destroy).grid(
-            column=1, row=9, pady=3, padx=3,sticky='W'
-        )
+            column=1, row=10, pady=5, padx=3,sticky='W')
     
     def validate_num_entry(self, entry):
-        """Excepts emptry string or within the tolerances defined 
-        in settings range"""
+        """Excepts emptry string or within the tolerances defined in settings range"""
         if entry == "" or self.settings.check_distance_tolerance(entry):
             return True 
         return False 
@@ -101,7 +102,6 @@ class SettingsDisplay(tk.Toplevel):
         except ValueError:
             return False
         
-
     def capature_side_shots_toggle(self):
         """toggles the capature side shot checkbox and 
         apply state to the prefix label"""
@@ -112,7 +112,6 @@ class SettingsDisplay(tk.Toplevel):
         self.side_shot_label.configure(state=state)
         self.side_shot_entry.configure(state=state)
         
-
     def validate_tolerance(self, tolerance):
         """Validate function that check if the 
         passed in Entry tolerance can be accepted"""
@@ -127,8 +126,8 @@ class SettingsDisplay(tk.Toplevel):
         self.settings.side_shot_prefix = self.side_shot_prefix.get()
         self.settings.angular_precision = int(self.angular_precision.get())
         self.settings.linear_precision = int(self.linear_precision.get())
+        self.settings.instrument_type = self.instrument_type.get()
         self.destroy()
         
 
   
-    

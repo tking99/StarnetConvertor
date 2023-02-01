@@ -1,12 +1,13 @@
 import tkinter as tk 
 from tkinter import ttk
-from tkinter.filedialog import asksaveasfile
+from tkinter.filedialog import asksaveasfile, askopenfile
 
 
 class ExportSettingsDisplay(tk.Toplevel):
     def __init__(self, container, settings, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
-        self.container = container 
+        self.container = container
+        self.settings = settings 
         self.export_settings = settings.export_settings
         self.title('Export Settings')
         self.resizable(False, False)
@@ -47,7 +48,7 @@ class ExportSettingsDisplay(tk.Toplevel):
         ttk.Label(setup_sf_container, text='Setup Inline Scale Factor').grid(
             column=0, row=0, pady=2, padx=3, sticky='EW'
         )
-       
+
         self.apply_setup_sf = tk.BooleanVar(value=self.export_settings.setup_scale_factor)
         # If measurements already scaled then disable option
         state = self._get_label_state(not settings.apply_scale_factor)
@@ -56,13 +57,30 @@ class ExportSettingsDisplay(tk.Toplevel):
             command=self.export_settings.apply_setup_scale_factor_toggle,
                 state=state).grid(column=0, row=1)
 
+        # Setup Instrument settings 
+        setup_inst_container = ttk.Frame(left_container)
+        setup_inst_container.grid(column=0, row=3, sticky='NW', pady=(10,0), padx=(5,0))
+        ttk.Label(setup_inst_container, text='Setup Inline Instrument Settings').grid(
+            column=0, row=0, pady=2, padx=3, sticky='EW'
+        )
+        self.apply_setup_inst = tk.BooleanVar(value=self.export_settings.setup_instrument_type)
+        state = self._get_label_state(bool(self.settings.instrument_types))
+        ttk.Checkbutton(setup_inst_container, text='Add Setup Inline Instrument Settings', variable=self.apply_setup_inst,
+            command=self.export_settings.apply_setup_instrument_toggle, state=state).grid(column=0, row=1)
+        
         # 2D Export
         self.export_files_2D_container = ttk.Frame(left_container)
-        self.export_files_2D_container.grid(column=0, row=3, pady=(35,0), sticky='NW')
+        self.export_files_2D_container.grid(column=0, row=4, pady=(50,0), sticky='NW')
+        self.export_2D_buttons = ttk.Frame(self.export_files_2D_container)
+        self.export_2D_buttons.grid(column=0, row=0, sticky='NW')
         self.export_2d = tk.BooleanVar(value=self.export_settings.export2d)
-        ttk.Checkbutton(self.export_files_2D_container, text=' Export 2D', variable=self.export_2d,
+        self.combine_2d = tk.BooleanVar(value=self.export_settings.combine_2D_file)
+        ttk.Checkbutton(self.export_2D_buttons, text=' Export 2D', variable=self.export_2d,
             command=self.export_2D_toggle, onvalue=True, offvalue=False).grid(
             column=0, row=0, sticky='NW', pady=2, padx=3)
+        ttk.Checkbutton(self.export_2D_buttons, text='Combine 2D', variable=self.combine_2d,
+            command=self.combine_2D_toggle, onvalue=True, offvalue=False).grid(
+            column=1, row=0, sticky='NW', pady=2, padx=3)
         self.load_2D_file_label()
         
         # Units Section
@@ -128,21 +146,36 @@ class ExportSettingsDisplay(tk.Toplevel):
             onvalue=True, offvalue=False)
         self.code_lb.grid(column=1, row=1, sticky='NW')
 
+        self.survey_frame = ttk.Frame(comments_container)
+        self.survey_frame.grid(column=0, row=3, pady=(10,10))
+        
+        self.surveyor = tk.StringVar(value=self.export_settings.comments.surveyor)
+        ttk.Label(self.survey_frame, text='Surveyor:').grid(column=0, row=0)
+        surveyor_box = ttk.Entry(self.survey_frame, textvariable=self.surveyor)
+        surveyor_box.grid(column=1, row=0, sticky='NW', padx=(5,0))
+
+
         # display the comments if checked
         self.display_comments(self.export_settings.comments.apply_comments)
         
         # Sigot Measurements
         self.spigot_container = ttk.Frame(right_contaner)
         self.spigot_container.grid(column=0, row=2, sticky='NW', pady=(10,))
-        self.remove_side_shots = tk.BooleanVar(value=self.export_settings.remove_side_shots)
-        ttk.Label(self.spigot_container, text='Side Shot Measurements').grid(column=0, row=0, sticky='NW', pady=2, padx=3)
-        ttk.Checkbutton(self.spigot_container, variable=self.remove_side_shots, command=self.side_shots_toggle,
-            text='Remove Side Shot Obs.', onvalue=True, offvalue=False).grid(column=0, row=1, sticky='NW', pady=2, padx=3)
-
+        self.process_target_obs = tk.BooleanVar(value=self.export_settings.process_target_obs)
+    
+        ttk.Label(self.spigot_container, text='Target / Side Shot Processing').grid(column=0, row=0, sticky='NW', pady=2, padx=3)
+        ttk.Checkbutton(self.spigot_container, variable=self.process_target_obs, command=self.export_settings.apply_process_target_obs_toggle,
+            text='Process Target Obs.', onvalue=True, offvalue=False).grid(column=0, row=1, sticky='NW', pady=2, padx=3)
+        
+        self.process_side_shots = tk.BooleanVar(value=self.export_settings.process_side_shot_obs)
+        ttk.Checkbutton(self.spigot_container, variable=self.process_side_shots, command=self.apply_process_side_shot_obs_toggle, 
+            text='Process Side Shot Obs.', onvalue=True, offvalue=False).grid(column=0, row=3, sticky='NW', pady=2, padx=3)
+            
         self.side_shot_code_frame = ttk.Frame(self.spigot_container)
-        self.side_shot_code_frame.grid(column=0, row=2, sticky='NW')
+        self.side_shot_code_frame.grid(column=0, row=4, sticky='NW')
         self.side_shot_code = tk.StringVar(value=self.export_settings.side_shot_processing_code)
         ttk.Label(self.side_shot_code_frame, text='Side Shot Type').grid(column=0, row=0, sticky='NW', pady=2, padx=3)
+        
         ttk.Radiobutton(self.side_shot_code_frame, text="'M'", variable=self.side_shot_code,
             value='M', command=self.update_side_shot_processing_code).grid(
             column=1, row=0, sticky='NW', pady=2, padx=3)
@@ -150,14 +183,20 @@ class ExportSettingsDisplay(tk.Toplevel):
             value='SS', command=self.update_side_shot_processing_code).grid(
             column=2, row=0, sticky='NW', pady=2, padx=3)
 
+
         # 3D Export
         self.export_files_3D_container = ttk.Frame(right_contaner)
-        self.export_files_3D_container.grid(column=0, row=3, sticky='NW')
+        self.export_files_3D_container.grid(column=0, row=4, sticky='NW')
+        self.export_3D_buttons = ttk.Frame(self.export_files_3D_container)
+        self.export_3D_buttons.grid(column=0, row=0, sticky='NW')
         self.export_3d = tk.BooleanVar(value=self.export_settings.export3d)
-        ttk.Checkbutton(self.export_files_3D_container, text='Export 3D', variable=self.export_3d,
+        self.combine_3d = tk.BooleanVar(value=self.export_settings.combine_3D_file)
+        ttk.Checkbutton(self.export_3D_buttons, text='Export 3D', variable=self.export_3d,
             command=self.export_3D_toggle, onvalue=True, offvalue=False).grid(
-            column=0, row=0, sticky='NW')
-
+            column=0, row=0, sticky='NW', pady=2, padx=3)
+        ttk.Checkbutton(self.export_3D_buttons, text='Combine 3D', variable=self.combine_3d,
+            command=self.combine_3D_toggle, onvalue=True, offvalue=False).grid(
+                column=1, row=0, stick='NW', pady=2, padx=3)
         self.load_3D_file_label()
 
         # Preview Buttons 
@@ -172,6 +211,8 @@ class ExportSettingsDisplay(tk.Toplevel):
             padx=5)
 
     def export(self):
+        # Save surveyor name
+        self.export_settings.comments.surveyor = self.surveyor.get()
         # create dat files
         result_2D, result_3D = self.container.survey_processor.create_dat_files()
         if result_2D or result_3D:
@@ -188,19 +229,27 @@ class ExportSettingsDisplay(tk.Toplevel):
     def update_measurement_format(self):
         self.export_settings.measurement_format = self.measurement_format.get()
 
-    def update_linear_unit(self):
-        self.export_settings.linear_unit = self.liner_unit.get()
-
+    def update_linear_unit(self, *args):
+        self.export_settings.linear_unit = self.linear_unit.get()
+      
     def export_2D_toggle(self):
         """Toggle for export2d and updates 2D label state"""
         self.export_settings.apply_export_2d_toggle()
         self.refresh_2D_file_label()
+
+    def combine_2D_toggle(self):
+        """Toggle for combine2d"""
+        self.export_settings.apply_combine_2D_toggle()
     
     def export_3D_toggle(self):
         """Toggle for export3d and updates 3D label state"""
         self.export_settings.apply_export_3d_toggle()
         self.refresh_3D_file_label()
-        
+    
+    def combine_3D_toggle(self):
+        """Toggle for combined3D"""
+        self.export_settings.apply_combine_3D_toggle()
+
     def export_spigot_toggle(self):
         """Toggle for export spigot and updates spigot label state"""
         self.export_settings.apply_export_spigot_toggle()
@@ -267,13 +316,13 @@ class ExportSettingsDisplay(tk.Toplevel):
         return 'disabled'
 
     def set_export_2D_path(self):
-        file = self._get_dat_file()
+        file = self.get_dat_file(self.export_settings.combine_2D_file)
         if file: 
             self.export_settings.file_2D_path = file.name
             self.refresh_2D_file_label()
            
     def set_export_3D_path(self):
-        file = self._get_dat_file()
+        file = self.get_dat_file(self.export_settings.combine_3D_file)
         if file:
             self.export_settings.file_3D_path = file.name
             self.refresh_3D_file_label()
@@ -296,11 +345,11 @@ class ExportSettingsDisplay(tk.Toplevel):
         """sets the sdie side shot processing code"""
         self.export_settings.side_shot_processing_code = self.side_shot_code.get()
        
-    def side_shots_toggle(self):
-        """toggles between the side shot processing code 
-        being active or disabled when remove side shots is applied"""
-        self.export_settings.apply_remove_side_shots_toggle()
-        if not self.export_settings.remove_side_shots:
+    def apply_process_side_shot_obs_toggle(self):
+        """toggles between the side shot processing code being active 
+        or disabled when processing side shots"""
+        self.export_settings.apply_process_side_shot_obs_toggle()
+        if self.export_settings.process_side_shot_obs:
             self._activate_children(self.side_shot_code_frame)
         else:
             self._disable_children(self.side_shot_code_frame)
@@ -315,9 +364,19 @@ class ExportSettingsDisplay(tk.Toplevel):
         for child in frame.winfo_children():
             child.configure(state='normal')
 
-    def _get_dat_file(self):
+    def get_dat_file(self, merge):
+        if merge:
+            return self._get_open_dat_file()
+        return self._get_save_dat_file()
+
+
+    def _get_save_dat_file(self):
         files = [('Dat Files', '.dat')]
         return asksaveasfile(filetypes=files, defaultextension=files[0][1])
+
+    def _get_open_dat_file(self):
+        files = [('Dat Files', '.dat')]
+        return askopenfile(filetypes=files, defaultextension=files[0][1])
     
     def _destory_children(self, container):
         for child in container.winfo_children():

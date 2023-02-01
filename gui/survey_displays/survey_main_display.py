@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk 
 
 from starnet_formatter.importer_processors import FormatFileProcessor
+from starnet_formatter.checkers import SetupsChecker
 from gui.survey_displays.survey_processor_displays import SurveyProcessorFrame
 from gui.survey_displays.summary_display import SummaryDisplay
 from gui.export_displays.export_settings_displays import ExportSettingsDisplay
@@ -30,9 +31,16 @@ class SurveyMainDisplay(ttk.Frame):
 
     def display_export_settings(self):
         """Displays the export settings display """
-        export_settings_display = ExportSettingsDisplay(self,
-            self.survey_processor.settings)
-        export_settings_display.grab_set()
+        no_target_ob_setups = SetupsChecker.no_target_obs(self.survey_processor.setups)
+        
+        if no_target_ob_setups:
+           tk.messagebox.showerror(title='No Active Target Obs', 
+            message=f'Following setups have no active target obs {no_target_ob_setups}')
+        
+        else:
+            export_settings_display = ExportSettingsDisplay(self,
+                self.survey_processor.settings)
+            export_settings_display.grab_set()
 
     def display_success_export(self, result2D, result3D):
         """display success export message"""

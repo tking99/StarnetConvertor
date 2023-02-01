@@ -2,8 +2,9 @@ from decimal import Decimal, DecimalException
 from datetime import datetime
 
 from starnet_formatter.surveyModels import GonObservation, DecimalObservation, Setup, \
-    StarnetMeasurement, StarnetSetup
-from starnet_formatter.extractors import FormatFileObservationElementsExtractor, FormatFileSetupElementsExtractor
+    StarnetMeasurement, StarnetSetup, Job
+from starnet_formatter.extractors import FormatFileObservationElementsExtractor, FormatFileSetupElementsExtractor, \
+    FormatFileJobElementsExtractor
 from starnet_formatter.writters import *
 from starnet_formatter import errors
 
@@ -23,6 +24,19 @@ class FormatLineBuilder:
         except ValueError:
             return
 
+
+class FormatFileJobLineBuilder(FormatLineBuilder):
+    FORMAT_CODE = 'JO'
+    def __init__(self, job_line, line_number):
+        self.job_extracotor = FormatFileJobElementsExtractor()
+        self.errors = []
+        self.job_line = job_line
+        self.line_number = line_number 
+
+    def build(self):
+        """returns a surveyors name"""
+        return Job(self.job_extracotor.extract_surveyor(self.job_line))
+      
 
 class FormatFileSetupLineBuilder(FormatLineBuilder):
     """Checks that a format file setup line is correct format"""
@@ -154,7 +168,7 @@ class FormatFileObLineBuilder(FormatLineBuilder):
 
     def prism_constant(self):
         pc_str = self.ob_element_extractor.extract_prism_constant(self.obs_line)
-        self.pc = self.convert_decimal(pc_str)
+        self.pc = self.convert_decimal(pc_str) * 1000 # convert to mm
         if self.pc is None:
             self.errors.append(errors.FormatPrismConstantError(self.line_number))
 
@@ -214,8 +228,7 @@ class FormatFileObLineBuilder(FormatLineBuilder):
         """Adds a no setup error to the list of errors as 
         can't assign observation to a setup"""
         self.errors.append(errors.FormatNoSetupForObservationError(
-            self.line_number
-        ))
+            self.line_number))
     
     def __str__(self):
         return 'Observation Builder'
@@ -280,11 +293,11 @@ class StarnetSetupBuilder:
             self.setup.date_time, 
             self.setup.atmospheric_ppm,
             self.setup.scale_factor, 
+            self.setup.instrument_type,
             [self.create_starnet_measurement(reduced_ob, backsight_id) 
                 for reduced_ob in self.setup_reducer.create_reduced_observations(
                 self.setup, backsight_id, hz_angle
-            )]
-        )
+            )])
      
     def create_starnet_measurement(self, reduced_ob, backsight_id):
         """creates a StarnetMeasurement"""
@@ -304,28 +317,37 @@ class StarnetSetupBuilder:
 class StarnetWritterBuilder:
     @classmethod
     def starnet_2D_writter(cls, settings):
-        if settings.export_settings.setup_scale_factor:
-            setup_writter = SetupWritterScale
-        else:
-            setup_writter = SetupWritterNoScale
+        if settings.export_settings.combine_2D_file:
+            return StarnetWritterCombiner(
+                SetupWritter,
+                MeasurementWritterBuilder.build_2D_writter(settings),
+                CommentWritterBuilder.build_writter(settings.export_settings.comments),
+                InlineWritterBuilder.build_writter(settings.export_settings),
+                settings.export_settings)
+        
         return StarnetWritter(
-            setup_writter,
+            SetupWritter,
             MeasurementWritterBuilder.build_2D_writter(settings),
-            CommentWritterBuilder.build_writter(settings.export_settings.comments)
-        )
+            CommentWritterBuilder.build_writter(settings.export_settings.comments),
+            InlineWritterBuilder.build_writter(settings.export_settings),
+            settings.export_settings)
         
     @classmethod 
     def starnet_3D_writter(cls, settings):
-        if settings.export_settings.setup_scale_factor:
-            setup_writter = SetupWritterScale
-        else:
-            setup_writter = SetupWritterNoScale
+        if settings.export_settings.combine_3D_file:
+            return StarnetWritterCombiner(
+                SetupWritter,
+                MeasurementWritterBuilder.build_3D_writter(settings),
+                CommentWritterBuilder.build_writter(settings.export_settings.comments),
+                InlineWritterBuilder.build_writter(settings.export_settings),
+                settings.export_settings)
         
         return StarnetWritter(
-            setup_writter,
+            SetupWritter,
             MeasurementWritterBuilder.build_3D_writter(settings),
-             CommentWritterBuilder.build_writter(settings.export_settings.comments)
-        )
+            CommentWritterBuilder.build_writter(settings.export_settings.comments),
+            InlineWritterBuilder.build_writter(settings.export_settings),
+            settings.export_settings)
 
 
 class MeasurementWritterBuilder:
@@ -382,6 +404,20 @@ class MeasurementWritterBuilder:
                 return Writter
 
 
+class InlineWritterBuilder:
+    @classmethod 
+    def build_writter(self, export_settings):
+        """Builds and returns an inline writter based on the 
+        export settings"""
+        writters = []
+        if export_settings.setup_scale_factor:
+            writters.append(ScaleFactorInline)
+        
+        if export_settings.setup_instrument_type:
+            writters.append(InstrumentInline)
+        return InlineWritter(writters)
+        
+
 class CommentWritterBuilder:
     @classmethod 
     def build_writter(self, comment_settings):
@@ -397,6 +433,8 @@ class CommentWritterBuilder:
                 writters.append(AtmosPPMWritter)
                 
             if comment_settings.scale_factor:
-                writters.append(ScaleFactorWritter)
-                
+                writters.append(ScaleFactorWritter)        
         return CommentWritter(writters)
+
+
+

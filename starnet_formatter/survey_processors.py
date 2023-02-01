@@ -9,7 +9,7 @@ from starnet_formatter.surveyModels import StarnetSetup, StarnetMeasurement
 class SurveyProccesor:
     def __init__(self, settings):
         # if setups passed in init, then clean them before adding
-        self.setups = list() 
+        self.setups = []
         self.settings = settings
 
         # starnert processor 
@@ -29,6 +29,14 @@ class SurveyProccesor:
 
         self.mean_target_obs = dict()
 
+    def move_target(self, setup, target_id, code):
+        if code == 'TARGET':
+            # change spigot to target
+            setup.move_spigot_to_target(target_id)
+        elif code == 'SPIGOT':
+            # change target to spigot
+            setup.move_target_to_spigot(target_id)
+           
     def has_setups(self):
         """Returns a boolean if the survey processor has setups"""
         return len(self.setups) > 0
@@ -127,6 +135,7 @@ class StarnetSetupsProcessor:
             setup.date_time,
             setup.atmospheric_ppm,
             setup.scale_factor,
+            setup.instrument_type
         )
         # calculate delta 
         if setup.target_observations:
@@ -139,9 +148,8 @@ class StarnetSetupsProcessor:
             # create starnet measurements
             self.create_starnet_measurements(setup, starnet_setup, delta_angle)
             
-            # create starnet side shots if not removed from export settings
-            if not self.survey_processor.settings.export_settings.remove_side_shots:
-                self.create_side_shot_measurements(setup, starnet_setup, delta_angle)
+            # create starnet side shots 
+            self.create_side_shot_measurements(setup, starnet_setup, delta_angle)
 
         # add to starnet setups 
         self.starnet_setups.append(starnet_setup)

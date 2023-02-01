@@ -16,9 +16,10 @@ from gui.survey_displays.survey_main_display import SurveyMainDisplay
 from gui.import_displays.import_displays import ImportTreeDisplay
 
 
-from starnet_formatter.importer_processors import FormatFileProcessor
+from starnet_formatter.importer_processors import FormatFileProcessor, CompanyDefFileProcessor
 from starnet_formatter.file_models import StarnetFormatterProject
 from starnet_formatter.pickler import ProjectPickler
+
 
 class StarnetConvertor(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -112,13 +113,14 @@ class StarnetConvertor(tk.Tk):
             elif answer:
                 self.nav_menu.save_as_project()
         exit()
-
-
-
-
-
+     
+end_trial = datetime.strptime('31-03-2023', '%d-%m-%Y')
 
 if __name__ == "__main__":
-    main = StarnetConvertor()
-    main.protocol('WM_DELETE_WINDOW', main.exit)
-    main.mainloop()
+    if datetime.today() < end_trial:
+        main = StarnetConvertor()
+        main.protocol('WM_DELETE_WINDOW', main.exit)
+        main.mainloop()
+    else:
+        tk.messagebox.showerror(title='Version Error',
+            message='Please contact Tom King for latest version. ')
