@@ -61,18 +61,19 @@ class GonObservation(Observation):
         za_degrees = self.za_angle * Decimal(0.9000000000000)
         x = abs(Decimal(self.slope_distance) * Decimal(cos(radians(za_degrees))))
         y = abs(Decimal(self.slope_distance) * Decimal(sin(radians(za_degrees))))
-        earth_cur = 6378000
+        earth_cur = 6372000
         return x + Decimal(1/(2*earth_cur)) * (y**2)
        
     @property
     def no_scale_hor_dist(self):
         """returns the calculated hor 
-        dist based on the sd and za and earth curv, excludes 
-        scale factor"""
+        dist based on the sd and za and earth curv, excludes scale factor"""
         za_degrees = self.za_angle * Decimal(0.9000000000000)
         y = abs(Decimal(self.slope_distance) * Decimal(sin(radians(za_degrees))))
-        earth_cur = 6378000
-        return y - Decimal((1/earth_cur)) * self.vertical_elevation * y
+        x = abs(Decimal(self.slope_distance) * Decimal(cos(radians(za_degrees))))
+        earth_cur = 6372000
+        k = 0.070
+        return y - Decimal((1-k/2)/earth_cur) * x * y
     
     @property
     def scale_hor_dist(self):
@@ -247,6 +248,22 @@ class Setup:
         """returns a boolean in the target ob exsits within the setup"""
         return target_id in self.target_observations
 
+    
+    def update_target_spigot_id(self, target_old, target_id, target_height, target_pc):
+        target = self.target_observations.get(target_old.name)
+        if target is not None:
+            self.target_observations[target_id] = self.target_observations.pop(target_old.name)
+            target.name = target_id
+            target.target_height = Decimal(target_height)
+            target.change_prism_constant(Decimal(target_pc))
+        else:
+            target = self.side_shot_observations.get(target_old.name)
+            if target is not None:
+                self.side_shot_observations[target_id] = self.side_shot_observations.pop(target_old.name)
+                target.name = target_id
+                target.target_height = Decimal(target_height)
+                target.change_prism_constant(Decimal(target_pc))
+
     def delete_target(self, target):
         """Deletes a target observation from a setup if present"""
         if target.name in self.target_observations:
@@ -282,7 +299,6 @@ class TargetObservation:
         PC of the first observation"""
         if self.observations:
             return self.observations[0].prism_constant
-
 
     def change_prism_constant(self, pc):
         """Changes the prism constant and updates the 

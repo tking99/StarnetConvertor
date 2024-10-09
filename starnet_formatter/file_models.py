@@ -48,7 +48,7 @@ class StarnetFormatterProject:
         return ''
 
 class ImportedFileOrgainser: 
-    ALLOWED_FILE_TYPES = ('csv', 'txt')
+    ALLOWED_FILE_TYPES = ('csv', 'txt', 'dat')
     def __init__(self):
         # holds a list of paths 
         self.imported_files = []
@@ -75,7 +75,6 @@ class ImportedFileOrgainser:
         self.imported_files = [f for f in self.imported_files 
             if not f.file_active]
         
-            
     def remove_file(self, file_path):
         if self.check_path_exists(file_path):
             self.imported_files.remove(file_path)
@@ -113,7 +112,7 @@ class ImportedFile:
         if the path exists"""
         if self.exists:
             return os.path.basename(self.path)
-
+    
     @property
     def normpath(self):
         return os.path.normpath(self.path)
@@ -128,7 +127,13 @@ class ImportedFile:
     def file_active_toggle(self):
         """toggles the state of file active"""
         self.file_active = not self.file_active
-        
+
+    def file_type(self):
+        """returns the file path"""
+        ft = os.path.splitext(self.path)
+        if ft:
+            return ft[-1]
+
     def __str__(self):
         return self.file_name 
 

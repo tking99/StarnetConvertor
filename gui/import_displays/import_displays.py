@@ -9,7 +9,7 @@ from starnet_formatter.file_models import ImportedFile
 
 class ImportTreeDisplay(ttk.Frame):
     """Import Tree Display"""
-    ALLOWED_FILE_TYPES = (('TXT','.txt'), ('CSV', '.csv'),)
+    ALLOWED_FILE_TYPES = (('TXT','.txt'), ('CSV', '.csv'), ('DAT', '.dat'))
 
     def __init__(self, container, import_orgainser, *args, **kwargs):
         super().__init__(container, *args, **kwargs)

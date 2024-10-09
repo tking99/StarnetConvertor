@@ -78,12 +78,11 @@ class SurveyProccesor:
         setup.atmospheric_ppm = atmos_ppm
         setup.scale_factor = scale_factor
 
-    def update_target(self, target, target_name, target_height,
+    def update_target(self, setup, target, target_name, target_height,
         target_pc):
         """Updates a target with the latest values"""
-        target.name = target_name 
-        target.target_height = Decimal(target_height)
-        target.change_prism_constant(Decimal(target_pc))
+        setup.update_target_spigot_id(target, target_name, target_height,
+            target_pc)
 
     def _create_starnet_setups(self):
         return self.starnet_processor.create_starnet_setups()

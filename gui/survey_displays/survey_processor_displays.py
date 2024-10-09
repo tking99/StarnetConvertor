@@ -118,8 +118,6 @@ class SurveyProcessorFrame(ttk.Frame):
             self.controller.display_export_settings()
 
 
-
-    
 class SetupTabsFrame(ttk.Frame):
     def __init__(self, container, controller, setups, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
@@ -547,7 +545,7 @@ class TargetInfoFrame(ttk.Frame):
 
     def update_target_info(self, target_name, target_height, target_pc):
         # update the target 
-        self.controller.survey_processor.update_target(
+        self.controller.survey_processor.update_target(self.setup,
             self.target, target_name, target_height, target_pc
         )
         # update the target labels

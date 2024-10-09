@@ -72,9 +72,12 @@ class FormatFileJobElementsExtractor:
 
     @staticmethod
     def extract_surveyor(job_line):
-        return job_line[2]
+        try:
+            return job_line[2]
+        except IndexError:
+            return 
 
-
+            
 class FormatFileSetupElementsExtractor:
     """Extracts setup data from a SOA format file""" 
     CODE = 'SU'

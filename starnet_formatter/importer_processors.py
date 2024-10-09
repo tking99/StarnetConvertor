@@ -60,8 +60,8 @@ class FormatFileProcessor:
         return self.total_errors > 0
 
 
-    
 class FormatLinesProcessor:
+    
     def __init__(self, settings, file_name):
         self.file_name = file_name
         self.settings = settings

@@ -114,7 +114,7 @@ class StarnetConvertor(tk.Tk):
                 self.nav_menu.save_as_project()
         exit()
      
-end_trial = datetime.strptime('31-03-2023', '%d-%m-%Y')
+end_trial = datetime.strptime('01-01-2025', '%d-%m-%Y')
 
 if __name__ == "__main__":
     if datetime.today() < end_trial:

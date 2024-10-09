@@ -20,7 +20,7 @@ class Settings:
     ALLOWED_TOLERANCE = (0.00000, 1.0)
     ALLOWED_ANGULAR_UNIT = ('GONS', 'DMS')
     DEFAULT_DEF_FILE = 'default_files/Company.def'
-    DEFAULT_INST_TYPE = 'TS60_Mean_6'
+    DEFAULT_INST_TYPE = 'TS60_Mean_6_Tun'
 
     def __init__(self):
         # Assign Default Values within the settings

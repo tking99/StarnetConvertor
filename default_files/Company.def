@@ -302,3 +302,16 @@ delta_elev_ppm                 1.9790000000
 instrument_centering_error     0.0010000000
 target_centering_error         0.0010000000
 vertical_centering_error       0.0010000000
+#
+instrument_name                TS60_Mean_6_Tun
+distance_std_err               0.0004080000
+edm_ppm                        1.0000000000
+angle_std_err                  0.2886750000
+direction_std_err              0.2041240000
+azimuth_std_err                3.0000000000
+zenith_std_err                 0.4082480000
+delta_elev_std_err             0.0152400000
+delta_elev_ppm                 1.9790000000
+instrument_centering_error     0.0010000000
+target_centering_error         0.0010000000
+vertical_centering_error       0.0020000000
